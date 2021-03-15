@@ -21,7 +21,19 @@ export default function Home() {
   }, []);
 
   const exportItems = () => {
-    console.log('Not implemented yet')
+    api.get("/api/graphql/get-orders")
+    .then((res) => {
+      console.log(res)
+      const element = document.createElement("a");
+      const file = new Blob([res.toString()], {type: 'text/plain'});
+      element.href = URL.createObjectURL(file);
+      element.download = "orderItems.txt";
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+    })
+    .catch((res) => {
+      console.log(res);
+    });
   };
 
   return (

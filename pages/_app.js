@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/globals.css'
 import '@shopify/polaris/dist/styles.css';
 import { Provider } from "@shopify/app-bridge-react";
 import { useShopOrigin } from 'shopify-nextjs-toolbox';
