@@ -6,6 +6,8 @@ const { default: createShopifyAuth } = require('@shopify/koa-shopify-auth');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const { default: Shopify, ApiVersion } = require('@shopify/shopify-api');
 const Router = require('koa-router');
+const store = require('store-js');
+const session = require('koa-session');
 
 dotenv.config();
 
@@ -29,13 +31,16 @@ const ACTIVE_SHOPIFY_SHOPS = {};
 app.prepare().then(() => {
     const server = new Koa();
     const router = new Router();
+    server.use(session({ secure: true, sameSite: 'none' }, server));
     server.keys = [Shopify.Context.API_SECRET_KEY];
 
     server.use(
         createShopifyAuth({
             afterAuth(ctx) {
-                const { shop, scope } = ctx.state.shopify;
+                const { shop, scope, accessToken } = ctx.state.shopify;
                 ACTIVE_SHOPIFY_SHOPS[shop] = scope;
+
+                store.set('accessToken', accessToken)
 
                 ctx.redirect(`/?shop=${shop}`);
             },
