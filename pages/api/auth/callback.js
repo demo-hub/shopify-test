@@ -2,7 +2,7 @@ import { handleAuthCallback } from 'shopify-nextjs-toolbox'
 import mongodb from 'mongodb'
 const { MongoClient } = mongodb
 
-const client = new MongoClient('mongodb+srv://shopify_admin:Q7bLqx23MzV4H14T@cluster0.ietwu.mongodb.net/shopify?retryWrites=true&w=majority', {
+const client = new MongoClient(process.env.CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
