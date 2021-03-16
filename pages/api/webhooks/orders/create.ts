@@ -1,8 +1,12 @@
-import { withSessionToken } from "shopify-nextjs-toolbox";
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { receiveWebhook } from '@shopify/koa-shopify-webhooks'
 
-const handler = async (req, res) => {
-  res.statusCode = 200
-  res.json('orders webhook')
+const webhook = receiveWebhook({ secret: process.env.SHOPIFY_API_PRIVATE_KEY });
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    console.log(webhook)
+    res.statusCode = 200
+    res.json('orders webhook')
 }
 
-export default withSessionToken(handler);
+export default handler;
