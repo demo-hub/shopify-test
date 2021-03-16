@@ -3,6 +3,8 @@ import { withSessionToken } from "shopify-nextjs-toolbox";
 import mongodb from 'mongodb'
 import { OrdersQuery } from "../models/ordersQuery";
 import axios from 'axios';
+import { Order } from '../models/order';
+import { LineItem } from '../models/lineItem';
 const { MongoClient } = mongodb
 
 const client = new MongoClient(process.env.CONNECTION_STRING, {
@@ -26,12 +28,22 @@ const handler = async(req: NextApiRequest, res: NextApiResponse) => {
 
     let cursor = '';
 
+    let lineItemsCursor = '';
+
     while (hasNextPage) {
-        const response = await getOrders(accessToken, cursor);
+        const response = await getOrders(accessToken, cursor, lineItemsCursor);
 
         result.push(response.data);
 
         hasNextPage = response.data.data.orders.pageInfo.hasNextPage;
+
+        response.data.data.orders.edges.forEach(async (value, index) => {
+            if ((value.node as Order).lineItems.pageInfo.hasNextPage) {
+                lineItemsCursor = (value.node as Order).lineItems.edges[(value.node as Order).lineItems.edges.length - 1].cursor;
+                const lineItemsResponse = await getOrders(accessToken, cursor, lineItemsCursor);
+                (value.node as Order).lineItems.edges.push.apply((value.node as Order).lineItems.edges, (lineItemsResponse.data.data.orders.edges[index].node as Order).lineItems);
+            }
+        })
 
         if (hasNextPage) {
             cursor = response.data.data.orders.edges[response.data.data.orders.edges.length - 1].cursor;
@@ -42,9 +54,7 @@ const handler = async(req: NextApiRequest, res: NextApiResponse) => {
     res.json(result)
 }
 
-// TODO: pagination of the line items
-
-const getOrders = async (accessToken: string, cursor?: string) => {
+const getOrders = async (accessToken: string, cursor?: string, lineItemsCursor?: string) => {
     return await axios.request<OrdersQuery>({
         method: 'POST',
         url: `https://test-project-next-js.myshopify.com/admin/api/graphql.json`,
@@ -63,7 +73,7 @@ const getOrders = async (accessToken: string, cursor?: string) => {
                                                     node {
                                                         id
                                                         tags
-                                                        lineItems(first: 10) {
+                                                        lineItems(first: 10${lineItemsCursor ? ', after: ' + lineItemsCursor : ''}) {
                                                             pageInfo {
                                                                 hasNextPage
                                                             }
