@@ -21,4 +21,6 @@ Create queue for processing orders automatically. Listen for new orders and send
 
 - Improve export order items algorithm to be much faster.
 - Use types on every api endpoint.
+- Handling errors in a better way.
+- Guarantee the coerence of the flow (if something fails in the middle  guarantee it doesn't affect what's been done).
 
