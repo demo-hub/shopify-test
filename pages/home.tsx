@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useApi } from 'shopify-nextjs-toolbox';
 import { EmptyState, Layout, Page } from '@shopify/polaris';
-import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react';
-
 
 export default function Home() {
   const api = useApi();

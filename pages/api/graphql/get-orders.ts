@@ -25,27 +25,27 @@ const handler = async(req, res) => {
             query: `query getOrders {
                                             orders(first: 10, query: "NOT tag:exported") {
                                                 pageInfo {
-                                                hasNextPage
+                                                    hasNextPage
                                                 }
                                                 edges {
-                                                cursor
-                                                node {
-                                                    id
-                                                    tags
-                                                    lineItems(first: 10) {
-                                                    pageInfo {
-                                                        hasNextPage
-                                                    }
-                                                    edges {
-                                                        cursor
-                                                        node {
-                                                        name
+                                                    cursor
+                                                    node {
+                                                        id
+                                                        tags
+                                                        lineItems(first: 10) {
+                                                            pageInfo {
+                                                                hasNextPage
+                                                            }
+                                                            edges {
+                                                                cursor
+                                                                node {
+                                                                name
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                     }
                                                 }
-                                                }
-                                            }
                                             }`
         })
     }).then(response => {
