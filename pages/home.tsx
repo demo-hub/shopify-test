@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useApi } from 'shopify-nextjs-toolbox';
 import { EmptyState, Layout, Page } from '@shopify/polaris';
+import { OrdersQuery } from "./api/models/ordersQuery";
+import { Order } from "./api/models/order";
+import { LineItem } from "./api/models/lineItem";
 
 export default function Home() {
   const api = useApi();
@@ -20,10 +23,24 @@ export default function Home() {
 
   const exportItems = () => {
     api.get("/api/graphql/get-orders")
-    .then((res) => {
+    .then((res: OrdersQuery[]) => {
       console.log(res)
+
+      // could maybe be better wothout needing 3 for loops
+      let text = '';
+      res.forEach((value) => {
+        value.data.orders.edges.forEach((edge) => {
+          if (edge.node instanceof Order) {
+            text += (edge.node as Order).id + '\r';
+            (edge.node as Order).lineItems.edges.forEach((lineItem) => {
+              text += (lineItem.node as LineItem).name + '\r';
+            })
+          }
+        })
+      });
+
       const element = document.createElement("a");
-      const file = new Blob([res.toString()], {type: 'text/plain'});
+      const file = new Blob([text], {type: 'text/plain'});
       element.href = URL.createObjectURL(file);
       element.download = "orderItems.txt";
       document.body.appendChild(element); // Required for this to work in FireFox
