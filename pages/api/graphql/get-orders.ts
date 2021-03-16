@@ -1,7 +1,7 @@
 import { withSessionToken } from "shopify-nextjs-toolbox";
 import mongodb from 'mongodb'
 import { OrdersQuery } from "../models/ordersQuery";
-// import * as fetch from 'node-fetch'
+import axios from 'axios';
 const { MongoClient } = mongodb
 
 const client = new MongoClient(process.env.CONNECTION_STRING, {
@@ -19,13 +19,14 @@ const handler = async(req, res) => {
 
     // TODO: pagination
 
-    fetch(`https://test-project-next-js.myshopify.com/admin/api/graphql.json`, {
+    axios.request<OrdersQuery>({
         method: 'POST',
+        url: `https://test-project-next-js.myshopify.com/admin/api/graphql.json`,
         headers: {
             'Content-Type': 'application/json',
             "X-Shopify-Access-Token": accessToken,
         },
-        body: JSON.stringify({
+        data: JSON.stringify({
             query: `query getOrders {
                                             orders(first: 10, query: "NOT tag:exported") {
                                                 pageInfo {
@@ -52,12 +53,10 @@ const handler = async(req, res) => {
                                                 }
                                             }`
         })
-    }).then((response: any) => {
-        const result = <OrdersQuery> response;
-
+    }).then((response) => {
         res.statusCode = 200
-        res.json(result)
-    });
+        res.json(response.data)
+    })
 }
 
 export default withSessionToken(handler);
