@@ -3,5 +3,5 @@ import { PageInfo } from "./pageInfo";
 
 export class QueryResult {
     pageInfo: PageInfo;
-    edges: Edges;
+    edges: Edges[];
 }
