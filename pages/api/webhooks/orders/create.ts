@@ -6,6 +6,7 @@ const webhook = receiveWebhook({ secret: process.env.SHOPIFY_API_PRIVATE_KEY });
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log(req)
     console.log(webhook)
+    // send to some queue
     res.statusCode = 200
     res.json('orders webhook')
 }

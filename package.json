@@ -24,7 +24,8 @@
         "nonce": "^1.0.4",
         "react": "17.0.1",
         "react-dom": "17.0.1",
-        "shopify-nextjs-toolbox": "0.1.12"
+        "shopify-nextjs-toolbox": "0.1.12",
+        "swr": "^0.5.3"
     },
     "devDependencies": {
         "@types/node": "^14.14.34",

@@ -4,7 +4,6 @@ import mongodb from 'mongodb'
 import { OrdersQuery } from "../models/ordersQuery";
 import axios from 'axios';
 import { Order } from '../models/order';
-import { LineItem } from '../models/lineItem';
 const { MongoClient } = mongodb
 
 const client = new MongoClient(process.env.CONNECTION_STRING, {

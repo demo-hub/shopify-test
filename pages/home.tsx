@@ -4,6 +4,7 @@ import { EmptyState, Layout, Page } from '@shopify/polaris';
 import { OrdersQuery } from "./api/models/ordersQuery";
 import { Order } from "./api/models/order";
 import { LineItem } from "./api/models/lineItem";
+import axios from "axios";
 
 export default function Home() {
   const api = useApi();
@@ -23,10 +24,10 @@ export default function Home() {
 
   const exportItems = () => {
     api.get("/api/graphql/get-orders")
-    .then((res: OrdersQuery[]) => {
+    .then(async (res: OrdersQuery[]) => {
       console.log(res)
 
-      // could maybe be better wothout needing 3 for loops
+      // could maybe be better without needing 3 for loops
       let text = '';
       res.forEach((value) => {
         value.data.orders.edges.forEach((edge) => {
@@ -45,6 +46,15 @@ export default function Home() {
       element.download = "orderItems.txt";
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
+
+      const result = await axios.request({
+        method: 'POST',
+        url: `/api/graphql/mark-as-exported`,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify(res)
+    });
     })
     .catch((res) => {
       console.log(res);
